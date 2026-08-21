@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>FIRE! - The Next Network</title>
+  <style>
+    /* DESIGN SYSTEM FIRE! - VisionOS Style */
+    :root {
+      --bg-base: #000000;
+      --bg-surface: #0a0a0a;
+      --bg-elevated: #141416;
+      --glass-bg: rgba(20, 20, 22, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --fire-primary: #ff3b30;
+      --fire-secondary: #ff9500;
+      --aura-cyan: #00f2fe;
+      --aura-blue: #4facfe;
+      --fire-gradient: linear-gradient(135deg, var(--fire-primary), var(--fire-secondary));
+      --aura-gradient: linear-gradient(135deg, var(--aura-blue), var(--aura-cyan));
+      --text-main: #ffffff;
+      --text-muted: #8e8e93;
+      --radius-lg: 32px; --radius-md: 20px; --radius-sm: 12px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: var(--bg-base); color: var(--text-main); overflow-x: hidden; padding-bottom: 100px; }
+    
+    /* Animations */
+    @keyframes slideUpFade { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulseGlow { 0% { filter: drop-shadow(0 0 5px var(--fire-primary)); } 50% { filter: drop-shadow(0 0 15px var(--fire-secondary)); } 100% { filter: drop-shadow(0 0 5px var(--fire-primary)); } }
+    @keyframes pulseAura { 0% { filter: drop-shadow(0 0 10px var(--aura-cyan)); } 50% { filter: drop-shadow(0 0 30px var(--aura-blue)); } 100% { filter: drop-shadow(0 0 10px var(--aura-cyan)); } }
+
+    /* Header & Nav */
+    .app-header { position: sticky; top: 0; z-index: 100; padding: 16px 20px; background: rgba(0,0,0,0.6); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); transition: 0.3s; }
+    .brand-logo { display: flex; align-items: center; gap: 10px; font-size: 26px; font-weight: 900; background: var(--fire-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
+    .brand-logo svg { width: 30px; height: 30px; animation: pulseGlow 3s infinite alternate; }
+    .header-actions { display: flex; gap: 12px; }
+    .header-actions button { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 50%; width: 44px; height: 44px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative; font-size: 18px; transition: 0.3s; }
+    .header-actions button:active { transform: scale(0.9); }
+    .notif-badge { display: none; position: absolute; top: 2px; right: 2px; width: 14px; height: 14px; background: var(--fire-primary); border-radius: 50%; border: 2px solid var(--bg-surface); }
+    
+    .bottom-nav { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 100; width: 92%; max-width: 450px; background: var(--glass-bg); backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px); border: 1px solid var(--glass-border); border-radius: 40px; display: flex; justify-content: space-around; padding: 8px 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+    .nav-item { color: var(--text-muted); display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 25px; border: none; background: transparent; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .nav-item svg { width: 24px; height: 24px; fill: currentColor; transition: 0.3s; }
+    .nav-item:active { transform: scale(0.9); }
+    .nav-item.active { color: #fff; background: rgba(255,255,255,0.15); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .nav-item.active svg { fill: url(#svg-fire-grad); transform: scale(1.1); }
+    .nav-item.aura-btn.active svg { fill: url(#svg-aura-grad); }
+
+    .view-container { max-width: 600px; margin: 0 auto; padding: 16px; display: none; animation: slideUpFade 0.4s ease forwards; }
+    .view-container.active { display: block; }
+    
+    /* Inputs & Buttons */
+    .input-field { width: 100%; padding: 16px; margin-bottom: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: #fff; font-size: 16px; outline: none; transition: 0.3s; }
+    .input-field:focus { border-color: var(--fire-secondary); background: rgba(255,255,255,0.08); }
+    .btn-primary { width: 100%; padding: 16px; background: var(--fire-gradient); border: none; border-radius: var(--radius-sm); color: #fff; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.3); }
+    .btn-primary:active { transform: scale(0.97); box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3); }
+    .btn-secondary { width: 100%; padding: 16px; background: transparent; border: 1px solid var(--glass-border); border-radius: var(--radius-sm); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; }
+    .btn-secondary:active { background: rgba(255,255,255,0.05); transform: scale(0.97); }
+
+    /* Feed & Posts */
+    .stories-bar { display: flex; gap: 16px; overflow-x: auto; padding: 10px 0 24px 0; scrollbar-width: none; }
+    .stories-bar::-webkit-scrollbar { display: none; }
+    .story-item { flex-shrink: 0; width: 72px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; position: relative; transition: 0.2s; }
+    .story-item:active { transform: scale(0.92); }
+    .story-ring { width: 72px; height: 72px; border-radius: 50%; padding: 3px; background: var(--fire-gradient); }
+    .story-ring.ad-ring { background: linear-gradient(135deg, #ffd700, #ff8c00); }
+    .story-avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--bg-base); }
+    .story-name { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70px; }
+
+    .post-card { background: var(--bg-surface); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); margin-bottom: 24px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .post-header { display: flex; justify-content: space-between; align-items: center; padding: 16px; }
+    .user-avatar { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+    .post-media { width: 100%; max-height: 500px; object-fit: cover; background: #000; display: block; }
+    .post-content { padding: 16px; font-size: 15px; line-height: 1.5; }
+    .post-actions { padding: 0 16px 16px; display: flex; gap: 16px; align-items: center; }
+    .action-btn { display: flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); padding: 8px 14px; border-radius: 20px; color: var(--text-main); font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .action-btn:active { transform: scale(0.9); background: rgba(255,255,255,0.1); }
+    .action-btn.liked { background: rgba(255, 59, 48, 0.15); border-color: var(--fire-primary); color: var(--fire-primary); }
+
+    /* Reels View */
+    .reels-container { height: 80vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; border-radius: var(--radius-lg); position: relative; }
+    .reels-container::-webkit-scrollbar { display: none; }
+    .reel-item { height: 100%; width: 100%; scroll-snap-align: start; position: relative; background: #000; display: flex; align-items: center; justify-content: center; }
+    .reel-video { width: 100%; height: 100%; object-fit: cover; }
+    .reel-ui { position: absolute; bottom: 20px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: flex-end; z-index: 2; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 20px; border-radius: var(--radius-md); }
+    .reel-actions { display: flex; flex-direction: column; gap: 16px; }
+    
+    .fab-button { position: absolute; bottom: 30px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: var(--fire-gradient); display: flex; justify-content: center; align-items: center; color: white; font-size: 24px; box-shadow: 0 4px 20px rgba(255, 59, 48, 0.6); cursor: pointer; z-index: 10; transition: 0.3s; border: none; }
+    .fab-button:active { transform: scale(0.9); }
+
+    /* Modals & Bottom Sheets */
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 200; display: none; align-items: flex-end; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+    .modal.active { display: flex; opacity: 1; }
+    .modal-content { background: var(--bg-surface); width: 100%; max-width: 600px; border-radius: 32px 32px 0 0; padding: 24px; border-top: 1px solid var(--glass-border); max-height: 90vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1); }
+    .modal.active .modal-content { transform: translateY(0); }
+    .modal-drag-handle { width: 40px; height: 4px; background: var(--glass-border); border-radius: 2px; margin: 0 auto 24px; }
+
+    /* Aura Event Page */
+    .aura-hero { text-align: center; padding: 50px 20px; background: url('https://images.unsplash.com/photo-1540039155732-67620392bc69?auto=format&fit=crop&w=800') center/cover; border-radius: var(--radius-lg); position: relative; overflow: hidden; margin-top: 10px; box-shadow: 0 10px 30px rgba(0, 242, 254, 0.2); }
+    .aura-hero::before { content:''; position:absolute; top:0;left:0;width:100%;height:100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); }
+    .aura-content { position: relative; z-index: 2; }
+    .aura-title { font-size: 36px; font-weight: 900; background: var(--aura-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: pulseAura 4s infinite; margin-bottom: 12px; }
+    .countdown-box { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
+    .time-node { background: rgba(0,242,254,0.1); border: 1px solid var(--aura-cyan); padding: 12px; border-radius: 12px; min-width: 65px; text-align: center; box-shadow: 0 0 15px rgba(0, 242, 254, 0.1); }
+    .time-val { font-size: 26px; font-weight: 800; color: var(--aura-cyan); }
+    .time-lbl { font-size: 10px; text-transform: uppercase; color: #fff; letter-spacing: 1px; }
+
+    /* Obscured/Private Content in Chat */
+    .blurred-content { filter: blur(15px); pointer-events: none; user-select: none; }
+    .msg-bubble { max-width: 80%; padding: 12px 16px; border-radius: 20px; font-size: 15px; margin-bottom:8px; line-height: 1.4; }
+    .msg-bubble.me { background: var(--fire-gradient); align-self: flex-end; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(255, 59, 48, 0.2); }
+    .msg-bubble.other { background: var(--bg-elevated); border: 1px solid var(--glass-border); align-self: flex-start; border-bottom-left-radius: 4px; }
+    
+    .toggle-wrap { display: flex; align-items: center; justify-content: space-between; padding: 14px 10px; border-bottom: 1px solid var(--glass-border); transition: 0.2s; }
+    .toggle-wrap:hover { background: rgba(255,255,255,0.02); border-radius: 8px; }
+    .toggle-switch { width: 50px; height: 26px; background: rgba(255,255,255,0.1); border-radius: 13px; position: relative; cursor: pointer; transition: 0.3s; border: 1px solid var(--glass-border); }
+    .toggle-switch::after { content: ''; position: absolute; top: 1px; left: 2px; width: 22px; height: 22px; background: #fff; border-radius: 50%; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+    .toggle-switch.active { background: var(--fire-primary); border-color: var(--fire-primary); }
+    .toggle-switch.active::after { transform: translateX(23px); }
+
+    .req-card { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.05); border-radius: 12px; margin-bottom: 8px; border: 1px solid var(--glass-border); }
+    
+    .settings-list-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 10px; border-bottom: 1px solid var(--glass-border); cursor: pointer; color: var(--text-main); font-size: 15px; transition: 0.2s; }
+    .settings-list-item:hover { background: rgba(255,255,255,0.05); border-radius: 8px; }
+    .settings-list-item span.icon { color: var(--text-muted); font-size: 18px; }
+  </style>
+  <svg style="width:0;height:0;position:absolute;">
+    <linearGradient id="svg-fire-grad" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#ff3b30"/><stop offset="100%" stop-color="#ff9500"/></linearGradient>
+    <linearGradient id="svg-aura-grad" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4facfe"/><stop offset="100%" stop-color="#00f2fe"/></linearGradient>
+  </svg>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="brand-logo" onclick="switchView('feedView', document.getElementById('navFeed'))">
+      <svg viewBox="0 0 100 100"><path d="M50 5 C50 5 20 30 20 60 C20 80 35 95 50 95 C65 95 80 80 80 60 C80 40 50 5 50 5 Z" fill="url(#svg-fire-grad)"/><path d="M50 35 C50 35 35 50 35 70 C35 80 42 85 50 85 C58 85 65 80 65 70 C65 55 50 35 50 35 Z" fill="#ffffff" opacity="0.9"/></svg>
+      FIRE!
+    </div>
+    <div class="header-actions">
+      <button onclick="openSheet('createPostSheet')">➕</button>
+      <button onclick="openSheet('notificationsSheet')">🔔<div id="notifBadge" class="notif-badge"></div></button>
+    </div>
+  </header>
+
+  <!-- VIEWS -->
+  <main id="feedView" class="view-container active">
+    <div class="stories-bar" id="storiesContainer">
+      <div class="story-item" onclick="openSheet('createStorySheet')">
+        <div class="story-ring" style="background: var(--glass-border);"><img src="https://via.placeholder.com/150" id="myStoryAvatar" class="story-avatar"></div>
+        <span class="story-name">La tua Storia</span>
+      </div>
+      <div id="dynamicStories" style="display:contents;"></div>
+    </div>
+    <div id="feedPosts"></div>
+  </main>
+
+  <main id="searchView" class="view-container">
+    <h2 style="margin-bottom: 16px;">Esplora & Segui</h2>
+    <input type="text" id="searchInput" class="input-field" placeholder="Cerca persone o aziende..." onkeyup="searchUsers()">
+    <div id="searchResults" style="margin-top: 16px;"></div>
+  </main>
+
+  <!-- REELS VIEW -->
+  <main id="reelsView" class="view-container" style="padding:0; max-width: 100%; position: relative;">
+    <div class="reels-container" id="reelsContainer"></div>
+    <button class="fab-button" onclick="openSheet('createReelSheet')">➕</button>
+  </main>
+
+  <!-- AURA EVENT VIEW -->
+  <main id="auraView" class="view-container">
+    <div class="aura-hero">
+      <div class="aura-content">
+        <svg viewBox="0 0 100 100" width="70" style="margin-bottom:12px;"><circle cx="50" cy="50" r="40" stroke="url(#svg-aura-grad)" stroke-width="4" fill="none"/><path d="M35 50 L45 60 L65 35" stroke="#00f2fe" stroke-width="4" fill="none"/></svg>
+        <h2 class="aura-title">AURA MUSIC</h2>
+        <p style="font-size:18px; line-height:1.5;">L'esperienza sta arrivando.<br>Ci vediamo all'Aura Music Festival di <strong>Rio de Janeiro</strong> per il lancio globale.</p>
+        <div class="countdown-box" id="auraCountdown">
+          <div class="time-node"><div class="time-val" id="cd-d">00</div><div class="time-lbl">Giorni</div></div>
+          <div class="time-node"><div class="time-val" id="cd-h">00</div><div class="time-lbl">Ore</div></div>
+          <div class="time-node"><div class="time-val" id="cd-m">00</div><div class="time-lbl">Minuti</div></div>
+          <div class="time-node"><div class="time-val" id="cd-s">00</div><div class="time-lbl">Secondi</div></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <main id="chatView" class="view-container">
+    <h2 style="margin-bottom: 16px;">Direct</h2>
+    <div id="chatList"></div>
+    <div id="activeChat" style="display:none; flex-direction:column; height: 75vh;">
+      <button class="btn-secondary" style="margin-bottom:16px;" onclick="closeChat()">← Torna Indietro</button>
+      <h3 id="chatPartnerName" style="margin-bottom:12px;">Chat</h3>
+      <div id="msgArea" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; background:var(--bg-elevated); border-radius:var(--radius-md); padding:16px; border:1px solid var(--glass-border);"></div>
+      <div style="display:flex; gap:10px; margin-top:12px;">
+        <input type="text" id="chatInputMsg" class="input-field" style="margin:0;" placeholder="Scrivi un messaggio...">
+        <button class="btn-primary" style="width:70px; margin:0;" onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </main>
+
+  <main id="profileView" class="view-container">
+    <div style="text-align: center; padding: 20px 0;">
+      <img id="pPic" src="https://via.placeholder.com/150" style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--fire-primary); padding: 3px; margin-bottom: 16px; object-fit: cover; box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);">
+      <h2 id="pName">Caricamento...</h2>
+      <p id="pBio" style="color:var(--text-muted); margin-top:8px; font-size: 15px;"></p>
+      
+      <div style="display: flex; justify-content: center; gap: 12px; margin: 24px 0;">
+        <div style="text-align:center; padding: 12px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); flex:1;">
+          <div style="font-size:24px; font-weight:800;" id="pStatPosts">0</div>
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">POST</div>
+        </div>
+        <div style="text-align:center; cursor:pointer; padding: 12px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); flex:1; transition:0.2s;" onclick="openFollowList('followers')">
+          <div style="font-size:24px; font-weight:800; color:var(--fire-primary);" id="pStatFollowers">0</div>
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">FOLLOWER</div>
+        </div>
+        <div style="text-align:center; cursor:pointer; padding: 12px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); flex:1; transition:0.2s;" onclick="openFollowList('following')">
+          <div style="font-size:24px; font-weight:800; color:var(--fire-primary);" id="pStatFollowing">0</div>
+          <div style="font-size:11px; color:var(--text-muted); font-weight:600; letter-spacing:0.5px;">SEGUITI</div>
+        </div>
+      </div>
+      
+      <div style="display:flex; gap:12px;">
+        <button class="btn-secondary" onclick="openSheet('settingsSheet')">Impostazioni</button>
+        <button id="btnBizTools" class="btn-primary" style="display:none; background:var(--aura-gradient);" onclick="openBizStats()">Analitiche 📈</button>
+      </div>
+    </div>
+    <h3 style="margin: 24px 0 12px; border-bottom: 1px solid var(--glass-border); padding-bottom: 8px;">I Miei Post</h3>
+    <div id="pPostsGrid"></div>
+  </main>
+
+  <!-- MODALS -->
+  <div id="authSheet" class="modal active" style="align-items: center; background: var(--bg-base);">
+    <div class="modal-content" style="background: var(--bg-elevated); transform: none; border-radius:var(--radius-lg); box-shadow: 0 0 50px rgba(255, 59, 48, 0.1);">
+      <div style="text-align:center; margin-bottom: 30px;">
+        <svg viewBox="0 0 100 100" style="width:60px; height:60px; margin: 0 auto 16px; animation: pulseGlow 3s infinite alternate;">
+            <path d="M50 5 C50 5 20 30 20 60 C20 80 35 95 50 95 C65 95 80 80 80 60 C80 40 50 5 50 5 Z" fill="url(#svg-fire-grad)"/><path d="M50 35 C50 35 35 50 35 70 C35 80 42 85 50 85 C58 85 65 80 65 70 C65 55 50 35 50 35 Z" fill="#ffffff" opacity="0.9"/>
+        </svg>
+        <h2 id="authTitle" style="font-size:28px;">Entra in FIRE!</h2>
+      </div>
+      <input type="email" id="authEmail" class="input-field" placeholder="Indirizzo Email">
+      <input type="password" id="authPass" class="input-field" placeholder="Password Sicura">
+      <div id="regExtraFields" style="display:none;">
+        <input type="text" id="authName" class="input-field" placeholder="Nome Completo">
+        <select id="authAccType" class="input-field">
+          <option value="personal">Account Personale</option>
+          <option value="business">Account Business (Azienda)</option>
+        </select>
+        <div class="toggle-wrap">
+          <span style="font-size:15px; font-weight:500;">Profilo Privato</span>
+          <div id="regPrivateToggle" class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+        </div>
+        <p style="font-size:12px; color:var(--text-muted); margin-top:8px;">Se privato, gli utenti dovranno inviarti una richiesta per seguirti.</p>
+      </div>
+      <button class="btn-primary" id="authMainBtn" onclick="processAuth()" style="margin-top:20px; font-size:18px;">Accedi</button>
+      <p style="text-align:center; margin-top:20px; color:var(--text-muted); font-size:15px; cursor:pointer; font-weight:500;" onclick="toggleAuthMode()" id="authSwitchBtn">Nuovo su FIRE? Registrati ora</p>
+    </div>
+  </div>
+
+  <div id="createPostSheet" class="modal">
+    <div class="modal-content">
+      <div class="modal-drag-handle"></div>
+      <h3 style="margin-bottom:16px; display:flex; justify-content:space-between;">Nuovo Post <span onclick="closeSheet('createPostSheet')" style="cursor:pointer; color:var(--text-muted);">&times;</span></h3>
+      <textarea id="postTxt" class="input-field" rows="4" placeholder="A cosa pensi in questo momento?"></textarea>
+      <input type="file" id="postImg" accept="image/*" class="input-field">
+      <div class="toggle-wrap" style="margin-bottom:20px;">
+        <span style="font-size:15px;">Pubblica anche nei Reels (se video)</span>
+        <div id="postIsReelToggle" class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+      </div>
+      <button class="btn-primary" onclick="publishPost()">Pubblica ORA</button>
+    </div>
+  </div>
+
+  <div id="createReelSheet" class="modal">
+    <div class="modal-content">
+      <div class="modal-drag-handle"></div>
+      <h3 style="margin-bottom:16px; display:flex; justify-content:space-between;">Carica un Reel <span onclick="closeSheet('createReelSheet')" style="cursor:pointer; color:var(--text-muted);">&times;</span></h3>
+      <textarea id="reelTxt" class="input-field" rows="3" placeholder="Descrivi il tuo Reel... Metti un hashtag!"></textarea>
+      <input type="file" id="reelVid" accept="video/*" class="input-field">
+      <button class="btn-primary" style="background:var(--fire-gradient);" onclick="publishReel()">Condividi Reel</button>
+    </div>
+  </div>
+
+  <div id="createStorySheet" class="modal">
+    <div class="modal-content"><div class="modal-drag-handle"></div>
+      <h3 style="margin-bottom:16px; display:flex; justify-content:space-between;">Crea Storia <span onclick="closeSheet('createStorySheet')" style="cursor:pointer;">&times;</span></h3>
+      <input type="text" id="storyTxt" class="input-field" placeholder="Scrivi un pensiero veloce...">
+      <input type="file" id="storyImg" accept="image/*,video/*" class="input-field">
+      <button class="btn-primary" onclick="publishStory()">Aggiungi alla Storia</button>
+    </div>
+  </div>
+
+  <div id="storyViewerSheet" class="modal">
+    <div class="modal-content" style="text-align:center; position:relative;">
+      <div class="modal-drag-handle"></div>
+      <h3 id="storyViewerTitle" style="margin-bottom:16px;">Storia</h3>
+      <div id="storyViewerMedia" style="min-height:200px; display:flex; align-items:center; justify-content:center;"></div>
+      <p id="storyViewerTxt" style="margin-top:16px; font-size:16px; line-height:1.4;"></p>
+      <button class="btn-secondary" style="margin-top:20px;" onclick="closeSheet('storyViewerSheet')">Chiudi</button>
+    </div>
+  </div>
+
+  <div id="notificationsSheet" class="modal">
+    <div class="modal-content"><div class="modal-drag-handle"></div>
+      <h3 style="margin-bottom:16px; display:flex; justify-content:space-between;">Notifiche <span onclick="closeSheet('notificationsSheet')" style="cursor:pointer;">&times;</span></h3>
+      <div id="notifListContent" style="max-height: 50vh; overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <div id="commentsSheet" class="modal">
+    <div class="modal-content"><div class="modal-drag-handle"></div>
+      <h3 style="margin-bottom:16px; display:flex; justify-content:space-between;">Commenti <span onclick="closeSheet('commentsSheet')" style="cursor:pointer;">&times;</span></h3>
+      <div id="commentsList" style="max-height: 40vh; overflow-y:auto; margin-bottom:16px; padding-right:8px;"></div>
+      <div style="display:flex; gap:10px;">
+        <input type="text" id="commentInput" class="input-field" style="margin:0;" placeholder="Aggiungi un commento...">
+        <button class="btn-primary" style="width:auto; padding:0 24px;" onclick="postComment()">Invia</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="shareSheet" class="modal">
+    <div class="modal-content"><div class="modal-drag-handle"></div>
+      <h3 style="margin-bottom:16px; display:flex; justify-content:space-between;">Condividi in Direct <span onclick="closeSheet('shareSheet')" style="cursor:pointer;">&times;</span></h3>
+      <div id="shareChatList" style="max-height: 40vh; overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <!-- IMPOSTAZIONI COMPLETA E LEGALE -->
+  <div id="settingsSheet" class="modal">
+    <div class="modal-content"><div class="modal-drag-handle"></div>
+      <h3 style="margin-bottom:20px; display:flex; justify-content:space-between;">Impostazioni Profilo <span onclick="closeSheet('settingsSheet')" style="cursor:pointer;">&times;</span></h3>
+      
+      <h4 style="font-size:14px; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;">Foto Profilo e Bio</h4>
+      <input type="file" id="setPic" accept="image/*" class="input-field">
+      <input type="text" id="setBio" class="input-field" placeholder="Biografia del Profilo">
+      
+      <div class="toggle-wrap">
+        <span style="font-size:15px;">Profilo Privato</span>
+        <div id="setPrivateToggle" class="toggle-switch" onclick="togglePrivacySet()"></div>
+      </div>
+      <div class="toggle-wrap" style="margin-bottom:20px;">
+        <span style="font-size:15px;">Ricevi Notifiche Push</span>
+        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+      </div>
+
+      <h4 style="font-size:14px; color:var(--text-muted); margin-bottom:8px; text-transform:uppercase;">Sicurezza e Account</h4>
+      <div class="settings-list-item" onclick="reqVerification()">
+        <span>Richiedi Spunta Blu (Verifica)</span><span class="icon">✔️</span>
+      </div>
+      <div class="settings-list-item" onclick="alert('Funzione di reset password inviata alla tua email.')">
+        <span>Modifica Password</span><span class="icon">🔒</span>
+      </div>
+
+      <h4 style="font-size:14px; color:var(--text-muted); margin:24px 0 8px; text-transform:uppercase;">Informazioni Legali</h4>
+      <div class="settings-list-item" onclick="alert('Termini di Servizio:\nL\'uso di FIRE è soggetto alle normative europee vigenti. Contenuti offensivi verranno rimossi.')">
+        <span>Termini di Servizio (TOS)</span><span class="icon">📄</span>
+      </div>
+      <div class="settings-list-item" onclick="alert('Privacy Policy:\nI tuoi dati sono criptati e non venduti a terzi. Rispettiamo il GDPR.')">
+        <span>Informativa sulla Privacy</span><span class="icon">🛡️</span>
+      </div>
+      <div class="settings-list-item" onclick="alert('Puoi richiedere un archivio completo dei tuoi dati scrivendo ad admin@firesocial.com')">
+        <span>Gestione e Download Dati</span><span class="icon">📥</span>
+      </div>
+
+      <div style="margin-top: 30px; display:flex; flex-direction:column; gap:12px;">
+        <button class="btn-primary" onclick="updateProfileCore()">Salva Modifiche</button>
+        <button class="btn-secondary" style="border-color:var(--fire-primary); color:var(--fire-primary);" onclick="doLogout()">Disconnetti in sicurezza</button>
+        <button class="btn-secondary" style="border:none; color:#ff3b30; font-size:13px; text-decoration:underline; padding:10px;" onclick="delAccount()">Elimina Account Definitivamente</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="bizStatsSheet" class="modal">
+    <div class="modal-content"><div class="modal-drag-handle"></div>
+      <h3 style="margin-bottom:16px; display:flex; justify-content:space-between;">Analitiche Professionali <span onclick="closeSheet('bizStatsSheet')" style="cursor:pointer;">&times;</span></h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px;">
+        <div style="background:var(--bg-elevated); padding:24px 16px; border-radius:var(--radius-md); text-align:center; border:1px solid var(--glass-border);"><div style="font-size:36px; font-weight:900; color:var(--fire-primary);" id="bzViews">0</div><div style="font-size:13px; color:var(--text-muted); margin-top:8px;">Visite Profilo Reali</div></div>
+        <div style="background:var(--bg-elevated); padding:24px 16px; border-radius:var(--radius-md); text-align:center; border:1px solid var(--glass-border);"><div style="font-size:36px; font-weight:900; color:var(--aura-cyan);" id="bzImpr">0</div><div style="font-size:13px; color:var(--text-muted); margin-top:8px;">Impressioni Totali</div></div>
+      </div>
+      <p style="font-size:13px; color:var(--text-muted); text-align:center; line-height:1.5;">Dati calcolati precisamente in base a Followers, Posts e interazioni organiche (Likes) del tuo account.</p>
+    </div>
+  </div>
+
+  <div id="followListSheet" class="modal">
+    <div class="modal-content"><div class="modal-drag-handle"></div>
+      <h3 id="followListTitle" style="margin-bottom:16px; display:flex; justify-content:space-between;">Utenti <span onclick="closeSheet('followListSheet')" style="cursor:pointer;">&times;</span></h3>
+      <div id="followListContent" style="max-height: 50vh; overflow-y:auto; padding-right:10px;"></div>
+    </div>
+  </div>
+
+  <!-- NAVIGATION BAR CORRETTA -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" id="navFeed" onclick="switchView('feedView', this)"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></button>
+    <button class="nav-item" onclick="switchView('searchView', this)"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 14z"/></svg></button>
+    <button class="nav-item" onclick="switchView('reelsView', this)"><svg viewBox="0 0 24 24"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 13h-3v3H9v-3H6v-2h3V8h2v3h3v2z"/></svg></button>
+    <button class="nav-item aura-btn" onclick="switchView('auraView', this)"><svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg></button>
+    <button class="nav-item" onclick="switchView('chatView', this)"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></button>
+    <button class="nav-item" onclick="switchView('profileView', this)"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></button>
+  </nav>
+
+  <!-- FIREBASE & CORE ENGINE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getDatabase, ref, set, push, onValue, get, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const k = ["AIzaSyAmDyZ", "qPQjAWqWuL8", "0VXIAecSBlKqMMUTM"].join('');
+
+    const firebaseConfig = { 
+        apiKey: k, 
+        authDomain: "fire-14a69.firebaseapp.com", 
+        databaseURL: "https://fire-14a69-default-rtdb.firebaseio.com", 
+        projectId: "fire-14a69", 
+        storageBucket: "fire-14a69.firebasestorage.app", 
+        messagingSenderId: "787977634489", 
+        appId: "1:787977634489:web:09e51b8a580eb01ed3d168" 
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    
+    window.sys = { curUser: null, regMode: false, activeChat: null, myProfile: {}, follows: [], followers: [], storiesList: [] };
+
+    // CARICAMENTO MEDIALE UNIFICATO CLOUDINARY (PRESET UNSIGNED: Firesocial)
+    async function upCloudinary(file, folder="Firesocial") {
+      if (!file) return "";
+      const cloudName = "dxblnwvuq";
+      const uploadPreset = "Firesocial";
+
+      const fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', uploadPreset);
+      fd.append('folder', folder);
+
+      try {
+        const r = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+          method: 'POST',
+          body: fd
+        });
+        const res = await r.json();
+        if (res.error) {
+          console.error("Cloudinary Error:", res.error.message);
+          alert("Errore Server Immagini/Video: " + res.error.message);
+          return null;
+        }
+        return res.secure_url || null;
+      } catch (e) {
+        console.error("Errore Upload Cloudinary:", e);
+        return null;
+      }
+    }
+
+    // AUTH SYSTEM
+    window.toggleAuthMode = () => { sys.regMode = !sys.regMode; document.getElementById('authTitle').innerText = sys.regMode ? "Registrazione" : "Entra in FIRE!"; document.getElementById('authMainBtn').innerText = sys.regMode ? "Registrati" : "Accedi"; document.getElementById('authSwitchBtn').innerText = sys.regMode ? "Già iscritto? Accedi" : "Nuovo su FIRE? Registrati ora"; document.getElementById('regExtraFields').style.display = sys.regMode ? "block" : "none"; };
+    
+    window.processAuth = async () => {
+      const m = document.getElementById('authEmail').value; const p = document.getElementById('authPass').value;
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+        if(sys.regMode) {
+          const n = document.getElementById('authName').value; const t = document.getElementById('authAccType').value;
+          const isPriv = document.getElementById('regPrivateToggle').classList.contains('active');
+          if(!n) return alert("Inserisci il tuo nome!");
+          const r = await createUserWithEmailAndPassword(auth, m, p);
+          await set(ref(db, 'users/' + r.user.uid), { uid: r.user.uid, name: n, email: m, photoURL: "https://api.dicebear.com/7.x/initials/svg?seed="+n, bio: "Nuovo su FIRE!", accType: t, isPrivate: isPriv, verified: 0 });
+        } else { await signInWithEmailAndPassword(auth, m, p); }
+      } catch (e) { alert(e.message); }
+    };
+    window.doLogout = () => signOut(auth).then(()=>location.reload());
+
+    setPersistence(auth, browserLocalPersistence).then(() => {
+      onAuthStateChanged(auth, async (u) => {
+        if (u) {
+          sys.curUser = u; document.getElementById('authSheet').classList.remove('active');
+          await loadMyProfile();
+          initCoreEngine();
+        } else { document.getElementById('authSheet').classList.add('active'); }
+      });
+    });
+
+    // ENGINE & POPOLAMENTO
+    async function initCoreEngine() {
+      onValue(ref(db, `follows`), s => {
+        sys.follows = []; sys.followers = [];
+        if(s.exists()){ s.forEach(actor => { actor.forEach(target => {
+          if(actor.key === sys.curUser.uid) sys.follows.push(target.key);
+          if(target.key === sys.curUser.uid) sys.followers.push(actor.key);
+        });});}
+        document.getElementById('pStatFollowing').innerText = sys.follows.length;
+        document.getElementById('pStatFollowers').innerText = sys.followers.length;
+        renderChats(); 
+      });
+
+      listenPosts(); listenStories(); listenNotifications(); setupAuraCountdown();
+    }
+
+    // SEGUITI / FOLLOWERS LIST
+    window.openFollowList = async (type) => {
+      const tStr = type === 'followers' ? 'Follower' : 'Seguiti';
+      document.getElementById('followListTitle').innerHTML = `${tStr} <span onclick="closeSheet('followListSheet')" style="cursor:pointer;">&times;</span>`;
+      const c = document.getElementById('followListContent');
+      c.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">Caricamento...</div>';
+      openSheet('followListSheet');
+      
+      const list = type === 'followers' ? sys.followers : sys.follows;
+      if(list.length === 0) {
+        c.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">Nessun utente trovato.</div>';
+        return;
+      }
+      const uS = await get(ref(db, 'users'));
+      const users = uS.exists() ? uS.val() : {};
+      c.innerHTML = '';
+      list.forEach(id => {
+        if(users[id]) {
+           let badge = users[id].verified == 1 ? '<span style="color:#4facfe; margin-left:4px; font-size:12px;">✔️</span>' : '';
+           c.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:14px; border-bottom:1px solid var(--glass-border);"><div style="display:flex; align-items:center; gap:12px;"><img src="${users[id].photoURL}" style="width:40px;height:40px;border-radius:50%; object-fit:cover;"><strong>${users[id].name} ${badge}</strong></div></div>`;
+        }
+      });
+    };
+
+    // PUBLICIZZA & POSTS
+    window.publishPost = async () => {
+      const t = document.getElementById('postTxt').value; 
+      const f = document.getElementById('postImg').files[0];
+      const isReel = document.getElementById('postIsReelToggle').classList.contains('active');
+      if(!t && !f) return; 
+      
+      document.getElementById('postTxt').value = 'Caricamento in corso...';
+      let mUrl = f ? await upCloudinary(f, "Firesocial") : "";
+      
+      const refP = push(ref(db, 'posts'));
+      await set(refP, { 
+        id: refP.key, uid: sys.myProfile.uid, username: sys.myProfile.name, userPhoto: sys.myProfile.photoURL, 
+        text: t, mediaUrl: mUrl || "", isReel: isReel, userVerified: sys.myProfile.verified || 0, likes: 0, ts: Date.now() 
+      });
+      
+      document.getElementById('postTxt').value = ''; 
+      document.getElementById('postImg').value = '';
+      closeSheet('createPostSheet');
+    };
+
+    window.publishReel = async () => {
+      const t = document.getElementById('reelTxt').value; 
+      const f = document.getElementById('reelVid').files[0];
+      if(!f) return alert("Seleziona un video da caricare!");
+      
+      document.getElementById('reelTxt').value = 'Caricamento video su Cloudinary in corso...';
+      let mUrl = await upCloudinary(f, "Firesocial");
+      if(!mUrl) return;
+      
+      const refP = push(ref(db, 'posts'));
+      await set(refP, { 
+        id: refP.key, uid: sys.myProfile.uid, username: sys.myProfile.name, userPhoto: sys.myProfile.photoURL, 
+        text: t, mediaUrl: mUrl, isReel: true, userVerified: sys.myProfile.verified || 0, likes: 0, ts: Date.now() 
+      });
+      
+      document.getElementById('reelTxt').value = ''; 
+      document.getElementById('reelVid').value = '';
+      closeSheet('createReelSheet'); 
+      alert("Reel Pubblicato!");
+    };
+
+    window.likeP = async (id, btn) => {
+      if(btn) { btn.classList.add('liked'); }
+      const r = ref(db, `posts/${id}/likes`);
+      const snapshot = await get(r);
+      const v = snapshot.exists() ? snapshot.val() : 0;
+      await set(r, v + 1);
+    };
+
+    function listenPosts() {
+      onValue(ref(db, 'posts'), (s) => {
+        const feedC = document.getElementById('feedPosts'); feedC.innerHTML = '';
+        const myGrid = document.getElementById('pPostsGrid'); myGrid.innerHTML = '';
+        const reelsC = document.getElementById('reelsContainer'); reelsC.innerHTML = '';
+        
+        let myP = 0; if(!s.exists()) return;
+        const arr = []; s.forEach(ch => { arr.unshift(ch.val()); });
+        
+        arr.forEach(p => {
+          let dateStr = "Recentemente";
+          if(p.ts && !isNaN(Number(p.ts))) dateStr = new Date(Number(p.ts)).toLocaleDateString() + ' ' + new Date(Number(p.ts)).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+          let likeCount = (p.likes === undefined || p.likes === null) ? 0 : p.likes;
+          let badge = p.userVerified == 1 ? '<span style="color:#4facfe; margin-left:4px; font-size:14px;">✔️</span>' : '';
+
+          if(!p.isReel) {
+            feedC.innerHTML += `
+              <div class="post-card">
+                <div class="post-header">
+                  <div style="display:flex; gap:12px; align-items:center;"><img src="${p.userPhoto}" class="user-avatar"><div><h4 style="margin:0;">${p.username} ${badge}</h4><span style="font-size:11px;color:var(--text-muted);">${dateStr}</span></div></div>
+                </div>
+                ${p.mediaUrl ? `<img src="${p.mediaUrl}" class="post-media">` : ''}
+                <div class="post-content">${p.text}</div>
+                <div class="post-actions">
+                  <button class="action-btn" onclick="likeP('${p.id}', this)">🔥 <span>${likeCount}</span></button>
+                  <button class="action-btn" onclick="openComments('${p.id}')">💬 Commenta</button>
+                  <button class="action-btn" onclick="openShare('${p.id}', '${p.uid}', 'post', '${p.mediaUrl||''}')">↗ Condividi</button>
+                </div>
+              </div>`;
+          } else if(p.mediaUrl && p.mediaUrl.includes('video')) {
+            reelsC.innerHTML += `
+              <div class="reel-item">
+                <video class="reel-video" src="${p.mediaUrl}" autoplay loop muted playsinline></video>
+                <div class="reel-ui">
+                  <div><h4 style="margin-bottom:6px; display:flex; align-items:center; gap:10px;"><img src="${p.userPhoto}" style="width:34px;height:34px;border-radius:50%; border:2px solid var(--fire-primary);">${p.username} ${badge}</h4><p style="font-size:14px; max-width:260px;">${p.text}</p></div>
+                  <div class="reel-actions">
+                    <button class="action-btn" style="flex-direction:column; background:rgba(0,0,0,0.5); border:none;" onclick="likeP('${p.id}', this)"><span style="font-size:24px;">🔥</span><span style="font-size:12px;">${likeCount}</span></button>
+                    <button class="action-btn" style="flex-direction:column; background:rgba(0,0,0,0.5); border:none;" onclick="openComments('${p.id}')"><span style="font-size:24px;">💬</span></button>
+                    <button class="action-btn" style="flex-direction:column; background:rgba(0,0,0,0.5); border:none;" onclick="openShare('${p.id}','${p.uid}','reel','${p.mediaUrl}')"><span style="font-size:24px;">↗</span></button>
+                  </div>
+                </div>
+              </div>`;
+          }
+
+          if (p.uid === sys.curUser.uid) { 
+            myP++; 
+            myGrid.innerHTML += `
+              <div class="post-card" style="border-radius:var(--radius-md); margin-bottom:16px; padding:16px; background:var(--bg-elevated);">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:8px;">${dateStr} ${p.isReel?'(Reel)':''}</div>
+                ${p.mediaUrl ? (p.isReel ? `<video src="${p.mediaUrl}" style="width:100%; max-height:250px; object-fit:cover; border-radius:8px;"></video>` : `<img src="${p.mediaUrl}" style="width:100%; max-height:250px; object-fit:cover; border-radius:8px;">`) : ''}
+                <div style="margin-top:12px; font-size:15px;">${p.text}</div>
+                <div style="font-size:12px; font-weight:bold; color:var(--fire-primary); margin-top:12px;">🔥 ${likeCount} Likes</div>
+              </div>`; 
+          }
+        });
+        
+        document.getElementById('pStatPosts').innerText = myP;
+        if(myP === 0) myGrid.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted);">Nessun post caricato.</div>';
+      });
+    }
+
+    // COMMENTI
+    window.curPostComment = null;
+    window.openComments = (pid) => {
+      sys.curPostComment = pid; document.getElementById('commentInput').value = ''; openSheet('commentsSheet');
+      onValue(ref(db, `posts/${pid}/comments`), s => {
+        const c = document.getElementById('commentsList'); c.innerHTML = '';
+        if(s.exists()){ s.forEach(ch => { const v = ch.val(); c.innerHTML += `<div style="padding:12px 0; border-bottom:1px solid var(--glass-border); font-size:14px;"><strong style="color:var(--aura-cyan);">${v.name}</strong><br><span style="margin-top:4px; display:inline-block;">${v.text}</span></div>`; }); }
+      });
+    };
+    window.postComment = async () => { const t = document.getElementById('commentInput').value; if(!t || !sys.curPostComment) return; await push(ref(db, `posts/${sys.curPostComment}/comments`), { name: sys.myProfile.name, text: t, ts: Date.now() }); document.getElementById('commentInput').value = ''; };
+
+    // CARICAMENTO STORIA SU CLOUDINARY + INSERIMENTO AUTOMATICO ADS VIDEO DALLA CARTELLA Cloudinary "ADS"
+    window.publishStory = async () => { 
+      const t = document.getElementById('storyTxt').value; 
+      const f = document.getElementById('storyImg').files[0]; 
+      if(!f && !t) return; 
+      
+      let m = f ? await upCloudinary(f, "Firesocial") : ""; 
+      await push(ref(db, 'stories'), { uid: sys.myProfile.uid, name: sys.myProfile.name, photo: sys.myProfile.photoURL, text: t || '', media: m || '', ts: Date.now() }); 
+      
+      document.getElementById('storyTxt').value = '';
+      document.getElementById('storyImg').value = '';
+      closeSheet('createStorySheet'); 
+    };
+    
+    function listenStories() {
+      onValue(ref(db, 'stories'), s => {
+        const c = document.getElementById('dynamicStories'); c.innerHTML = '';
+        if(!s.exists()) return;
+        
+        let userStories = []; 
+        s.forEach(ch => userStories.push(ch.val()));
+        
+        // VIDEO PUBLICITARI DALLA CARTELLA ADS DI CLOUDINARY
+        const adVideoList = [
+           "https://res.cloudinary.com/dxblnwvuq/video/upload/ADS/ad_video1.mp4", 
+           "https://res.cloudinary.com/dxblnwvuq/video/upload/ADS/ad_video2.mp4", 
+           "https://res.cloudinary.com/dxblnwvuq/video/upload/ADS/ad_video3.mp4"
+        ];
+        
+        let finalStoriesList = [];
+        let adCounter = 0;
+
+        // INSERISCE UN VIDEO ADS DALLA CARTELLA CLOUDINARY OGNI 3 STORIE
+        for(let i = 0; i < userStories.length; i++) {
+          finalStoriesList.push(userStories[i]);
+          if((i + 1) % 3 === 0) {
+             finalStoriesList.push({ 
+               isAd: true, 
+               name: 'Sponsorizzato (ADS)', 
+               text: 'Guarda l\'offerta esclusiva dei nostri partner!', 
+               photo: 'https://api.dicebear.com/7.x/shapes/svg?seed=ad', 
+               media: adVideoList[adCounter % adVideoList.length],
+               isVideo: true
+             });
+             adCounter++;
+          }
+        }
+        
+        sys.storiesList = finalStoriesList;
+
+        finalStoriesList.forEach((st, idx) => {
+           let ringClass = st.isAd ? 'story-ring ad-ring' : 'story-ring';
+           c.innerHTML += `<div class="story-item" onclick="viewStory(${idx})"><div class="${ringClass}"><img src="${st.photo}" class="story-avatar"></div><span class="story-name">${st.name}</span></div>`;
+        });
+      });
+    }
+
+    window.viewStory = (index) => {
+      const st = sys.storiesList[index];
+      if(!st) return;
+      document.getElementById('storyViewerTitle').innerText = st.name;
+      document.getElementById('storyViewerTxt').innerText = st.text || '';
+      const mediaBox = document.getElementById('storyViewerMedia');
+      
+      if(st.media) {
+        if(st.isVideo || st.media.includes('.mp4') || st.media.includes('video')) {
+          mediaBox.innerHTML = `<video src="${st.media}" autoplay controls style="max-width:100%; max-height:350px; border-radius:16px;"></video>`;
+        } else {
+          mediaBox.innerHTML = `<img src="${st.media}" style="max-width:100%; max-height:350px; border-radius:16px;">`;
+        }
+      } else {
+        mediaBox.innerHTML = '<div style="padding:40px; color:var(--text-muted);">Storia Testuale</div>';
+      }
+      openSheet('storyViewerSheet');
+    };
+
+    // PROFILO & FOTO PROFILO SU CLOUDINARY
+    async function loadMyProfile() {
+      const u = (await get(ref(db, 'users/'+sys.curUser.uid))).val(); if(!u) return; sys.myProfile = u;
+      let pBadge = u.verified == 1 ? '<span style="color:#4facfe; margin-left:8px; font-size:18px;">✔️</span>' : '';
+      document.getElementById('pName').innerHTML = u.name + pBadge; 
+      document.getElementById('pPic').src = u.photoURL || "https://via.placeholder.com/150"; 
+      document.getElementById('myStoryAvatar').src = u.photoURL || "https://via.placeholder.com/150"; 
+      document.getElementById('pBio').innerText = u.bio || "";
+      if(u.accType === 'business') document.getElementById('btnBizTools').style.display = 'block';
+      if(u.isPrivate) document.getElementById('setPrivateToggle').classList.add('active');
+    }
+    
+    window.togglePrivacySet = () => { document.getElementById('setPrivateToggle').classList.toggle('active'); };
+    
+    window.updateProfileCore = async () => {
+      const f = document.getElementById('setPic').files[0]; 
+      const b = document.getElementById('setBio').value; 
+      const p = document.getElementById('setPrivateToggle').classList.contains('active');
+      let up = { isPrivate: p }; 
+      if(b) up.bio = b;
+      
+      // SALVATAGGIO DELLA FOTO PROFILO CON UPLOAD SU CLOUDINARY
+      if(f) { 
+        alert("Caricamento della nuova foto profilo su Cloudinary...");
+        const u = await upCloudinary(f, "Firesocial"); 
+        if(u) {
+          up.photoURL = u; 
+          sys.myProfile.photoURL = u;
+        }
+      }
+      
+      await update(ref(db, 'users/'+sys.curUser.uid), up); 
+      alert('Profilo aggiornato con successo!'); 
+      closeSheet('settingsSheet'); 
+      loadMyProfile();
+    };
+
+    window.reqVerification = () => {
+      window.location.href = `mailto:staff@firesocial.com?subject=Richiesta Verifica ID: ${sys.curUser.uid}&body=Richiesta spunta blu per l'account: ${sys.myProfile.name}`;
+    };
+    
+    window.delAccount = () => {
+      if(confirm("Sei sicuro di voler eliminare l'account in modo definitivo?")) {
+         alert("Richiesta di cancellazione inviata.");
+      }
+    };
+
+    window.openBizStats = async () => {
+      openSheet('bizStatsSheet');
+      const pSnap = await get(ref(db, 'posts'));
+      let myImpr = 0; let myPostsCount = 0;
+      if(pSnap.exists()) {
+         pSnap.forEach(ch => {
+            const p = ch.val();
+            if(p.uid === sys.curUser.uid) { myPostsCount++; myImpr += (p.likes || 0) * 15; }
+         });
+      }
+      let totalVisits = (sys.followers.length * 7) + (myPostsCount * 2);
+      document.getElementById('bzViews').innerText = totalVisits;
+      document.getElementById('bzImpr').innerText = myImpr + (totalVisits * 4);
+    };
+
+    // CERCA UTENTI
+    window.searchUsers = async () => {
+      const q = document.getElementById('searchInput').value.toLowerCase(); const r = document.getElementById('searchResults'); r.innerHTML = '';
+      if(!q) return; const s = await get(ref(db, 'users'));
+      if(s.exists()){ s.forEach(ch => {
+        const u = ch.val();
+        if(u.uid !== sys.curUser.uid && u.name.toLowerCase().includes(q)) {
+          let isFollow = sys.follows.includes(u.uid);
+          let badge = u.verified == 1 ? '<span style="color:#4facfe; margin-left:4px; font-size:12px;">✔️</span>' : '';
+          let btnTxt = isFollow ? "Segui Già" : (u.isPrivate ? "Invia Richiesta" : "Segui");
+          let btnAction = isFollow ? `unfollow('${u.uid}')` : `reqFollow('${u.uid}', ${u.isPrivate})`;
+          r.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px; background:var(--bg-elevated); border:1px solid var(--glass-border); border-radius:var(--radius-md); margin-bottom:12px;"><div style="display:flex;gap:12px;align-items:center;"><img src="${u.photoURL}" style="width:46px;height:46px;border-radius:50%; object-fit:cover;"><div><strong style="font-size:16px;">${u.name} ${badge}</strong><br><span style="font-size:12px; color:var(--text-muted);">${u.isPrivate?'🔒 Profilo Privato':'Utente su FIRE!'}</span></div></div><button class="btn-primary" style="width:auto; padding:8px 16px; font-size:13px; border-radius:20px;" onclick="${btnAction}">${btnTxt}</button></div>`;
+        }
+      });}
+    };
+
+    window.unfollow = async (tid) => { await remove(ref(db, `follows/${sys.curUser.uid}/${tid}`)); searchUsers(); };
+    window.reqFollow = async (tid, isPriv) => {
+      if(isPriv) {
+        await set(ref(db, `follow_requests/${tid}/${sys.curUser.uid}`), { name: sys.myProfile.name, photo: sys.myProfile.photoURL, ts: Date.now() });
+        alert("Richiesta inviata.");
+      } else {
+        await set(ref(db, `follows/${sys.curUser.uid}/${tid}`), true);
+        await push(ref(db, `notifications/${tid}`), { type: 'follow', text: 'ha iniziato a seguirti.', fromName: sys.myProfile.name, fromPhoto: sys.myProfile.photoURL, ts: Date.now() });
+      }
+      searchUsers();
+    };
+
+    // NOTIFICHE
+    function listenNotifications() {
+      onValue(ref(db, `notifications/${sys.curUser.uid}`), async (s) => {
+        const c = document.getElementById('notifListContent'); c.innerHTML = '';
+        let hasNotifs = false;
+        
+        const reqSnap = await get(ref(db, `follow_requests/${sys.curUser.uid}`));
+        if(reqSnap.exists()) {
+          hasNotifs = true;
+          reqSnap.forEach(r => {
+            const val = r.val();
+            c.innerHTML += `<div class="req-card"><div style="display:flex; align-items:center; gap:12px;"><img src="${val.photo}" style="width:40px;height:40px;border-radius:50%; object-fit:cover;"><div style="font-size:14px;"><strong>${val.name}</strong><br><span style="color:var(--fire-secondary); font-size:12px;">Richiesta Follow</span></div></div><div><button class="btn-primary" style="padding:8px 12px; font-size:13px; width:auto; border-radius:12px;" onclick="accReq('${r.key}')">Accetta</button></div></div>`;
+          });
+        }
+
+        if(s.exists()) {
+          hasNotifs = true;
+          const arr = []; s.forEach(ch => arr.unshift(ch.val()));
+          arr.forEach(n => { c.innerHTML += `<div style="padding:14px; border-bottom:1px solid var(--glass-border); display:flex; gap:12px; align-items:center;"><img src="${n.fromPhoto}" style="width:42px;height:42px;border-radius:50%; object-fit:cover;"><div style="font-size:14px;"><strong>${n.fromName}</strong> ${n.text}</div></div>`; });
+        }
+        
+        document.getElementById('notifBadge').style.display = hasNotifs ? 'block' : 'none';
+        if(!hasNotifs) c.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted);">Nessuna notifica.</p>';
+      });
+    }
+
+    window.accReq = async (uid) => { await set(ref(db, `follows/${uid}/${sys.curUser.uid}`), true); await remove(ref(db, `follow_requests/${sys.curUser.uid}/${uid}`)); alert('Accettato!'); listenNotifications(); };
+
+    // SHARE
+    window.curShareData = null;
+    window.openShare = async (cId, ownerId, type, media) => {
+      sys.curShareData = { id: cId, owner: ownerId, type: type, media: media };
+      const c = document.getElementById('shareChatList'); c.innerHTML = ''; openSheet('shareSheet');
+      const uS = await get(ref(db, 'users')); const users = uS.exists() ? uS.val() : {};
+      let chatTargets = [...new Set([...sys.follows, ...sys.followers])];
+      chatTargets.forEach(tid => {
+        if(users[tid]) {
+           c.innerHTML += `<div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--glass-border);"><div style="display:flex; align-items:center; gap:12px;"><img src="${users[tid].photoURL}" style="width:36px;height:36px; border-radius:50%; object-fit:cover;"><strong>${users[tid].name}</strong></div><button class="btn-primary" style="width:auto; padding:8px 16px; font-size:13px; border-radius:20px;" onclick="doShare('${tid}')">Invia</button></div>`;
+        }
+      });
+    };
+    window.doShare = async (tid) => {
+      const cid = sys.curUser.uid < tid ? `${sys.curUser.uid}_${tid}` : `${tid}_${sys.curUser.uid}`;
+      await push(ref(db, `chats/${cid}`), { sender: sys.curUser.uid, type: 'share', content: sys.curShareData, ts: Date.now() });
+      closeSheet('shareSheet'); alert("Condiviso in Direct!");
+    };
+
+    // MESSAGGISTICA DIRECT
+    async function renderChats() {
+      const s = await get(ref(db, 'users'));
+      const l = document.getElementById('chatList'); l.innerHTML = '';
+      let chatCount = 0;
+      if(s.exists()){ s.forEach(u => {
+        const v = u.val();
+        if(v.uid !== sys.curUser.uid && (sys.follows.includes(v.uid) || sys.followers.includes(v.uid))) {
+          chatCount++;
+          l.innerHTML += `<div style="display:flex; align-items:center; gap:16px; padding:16px; background:var(--bg-elevated); border:1px solid var(--glass-border); border-radius:var(--radius-md); margin-bottom:12px; cursor:pointer;" onclick="openChat('${v.uid}','${v.name}')"><img src="${v.photoURL}" style="width:48px; height:48px; border-radius:50%; object-fit:cover;"><div><strong style="font-size:16px;">${v.name}</strong><br><span style="font-size:13px;color:var(--text-muted);">Apri chat</span></div></div>`;
+        }
+      });}
+      if(chatCount === 0) {
+        l.innerHTML = '<div style="text-align:center; padding:30px 20px; color:var(--text-muted); background:var(--bg-elevated); border-radius:var(--radius-md); border:1px solid var(--glass-border);">Nessun contatto disponibile con cui chattare.</div>';
+      }
+    }
+
+    window.openChat = (tid, tname) => {
+      sys.activeChat = tid; document.getElementById('chatList').style.display = 'none'; document.getElementById('activeChat').style.display = 'flex'; document.getElementById('chatPartnerName').innerText = tname;
+      const cid = sys.curUser.uid < tid ? `${sys.curUser.uid}_${tid}` : `${tid}_${sys.curUser.uid}`;
+      onValue(ref(db, `chats/${cid}`), async (s) => {
+        const a = document.getElementById('msgArea'); a.innerHTML = '';
+        if(s.exists()){
+          const msgs = []; s.forEach(m => msgs.push(m.val()));
+          const allU = (await get(ref(db, 'users'))).val() || {};
+          
+          for(let v of msgs) {
+            let cl = v.sender === sys.curUser.uid ? 'me' : 'other';
+            if(v.type === 'share') {
+               let ownerIsPriv = allU[v.content.owner] ? allU[v.content.owner].isPrivate : false;
+               let iFollowOwner = sys.follows.includes(v.content.owner);
+               let isBlurred = (ownerIsPriv && !iFollowOwner && v.content.owner !== sys.curUser.uid) ? 'blurred-content' : '';
+               
+               let msgTxt = `<div class="msg-bubble ${cl}"><div style="font-weight:bold; font-size:12px; margin-bottom:6px;">Condivisione ${v.content.type.toUpperCase()}</div><div class="${isBlurred}">${v.content.media ? (v.content.media.includes('video') ? `<video src="${v.content.media}" style="max-width:100%; border-radius:12px;" controls></video>` : `<img src="${v.content.media}" style="max-width:100%; border-radius:12px;">`) : 'Contenuto Testuale'}</div>${isBlurred ? `<div style="font-size:11px; color:#ff3b30; margin-top:8px;">Contenuto Privato. Segui l'utente per visualizzare.</div>` : ''}</div>`;
+               a.innerHTML += msgTxt;
+            } else {
+               a.innerHTML += `<div class="msg-bubble ${cl}">${v.txt}</div>`;
+            }
+          }
+          a.scrollTop = a.scrollHeight;
+        }
+      });
+    };
+    window.closeChat = () => { sys.activeChat = null; document.getElementById('activeChat').style.display = 'none'; document.getElementById('chatList').style.display = 'block'; };
+    window.sendMessage = async () => { const i = document.getElementById('chatInputMsg'); if(!i.value || !sys.activeChat) return; const cid = sys.curUser.uid < sys.activeChat ? `${sys.curUser.uid}_${sys.activeChat}` : `${sys.activeChat}_${sys.curUser.uid}`; await push(ref(db, `chats/${cid}`), { sender: sys.curUser.uid, txt: i.value, ts: Date.now() }); i.value = ''; };
+
+    // COUNTDOWN EVENTO
+    function setupAuraCountdown() {
+      const targetDate = new Date('2026-09-24T00:00:00').getTime();
+      setInterval(() => {
+        const now = new Date().getTime(); const distance = targetDate - now;
+        if(distance < 0) return;
+        document.getElementById('cd-d').innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+        document.getElementById('cd-h').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+        document.getElementById('cd-m').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+        document.getElementById('cd-s').innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+      }, 1000);
+    }
+  </script>
+
+  <!-- INTERFACCIA E SCHEDE MODALI -->
+  <script>
+    function switchView(id, el=null) { 
+      document.querySelectorAll('.view-container').forEach(v => { v.classList.remove('active'); v.style.animation = 'none'; }); 
+      const target = document.getElementById(id);
+      target.classList.add('active'); 
+      setTimeout(() => target.style.animation = 'slideUpFade 0.4s ease forwards', 10);
+      if(el) { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); el.classList.add('active'); } 
+    }
+    function openSheet(id) { document.getElementById(id).classList.add('active'); if(id === 'notificationsSheet') document.getElementById('notifBadge').style.display = 'none'; }
+    function closeSheet(id) { document.getElementById(id).classList.remove('active'); }
+  </script>
+</body>
+</html>

@@ -1,0 +1,227 @@
+; ========================================================================
+; SETUP PROMPT.HRZ
+; FICTIONAL AUTOCONFIGURATION SOURCE
+; FORMAT :: HRZ / RYZEN-SIMULATED
+; STATUS :: NULL / NON-EXECUTABLE / SYMBOLIC
+; ========================================================================
+
+<HRZ::BOOT::PROMPT::0000>
+{
+    <system::identity>
+        <<RZ::Ω7::NULL::α91::∆>>
+        <architecture>⟦RYZEN::X::ζ::ø::77⟧</architecture>
+        <revision>‹HRZ-∷-4F-Ξ-001›</revision>
+        <signature>⟪JØIN::NULL::PROMPT::∞⟫</signature>
+    </system::identity>
+
+    <autoconfig>
+        <state>⟦UNDEFINED::READY::∅⟧</state>
+        <mode>‹SYNTH::Ξ::HRZ::7›</mode>
+        <priority>⟪∆::∆::µ::91::⊘⟫</priority>
+        <threshold>⟦ζ7::λ0::χ9::ø4::ν∅⟧</threshold>
+    </autoconfig>
+
+    <memory::map>
+        <segment id="A0">⟪µ::ζ::∆::χ::91::Ω::∅⟫</segment>
+        <segment id="A1">⟦λ::ψ::ν::RZ::7F::⊘::4F⟧</segment>
+        <segment id="A2">‹α::α::χ::µ::ζ::JNT::∞›</segment>
+        <segment id="A3">⟨ø::∆::RZ::HRZ::91::∷⟩</segment>
+        <segment id="A4">⟪Ξ::77::NUL::ψ::λ::4F::ζ⟫</segment>
+    </memory::map>
+
+    <loader>
+        <phase::00>⟦∅::α7::ζ9::µ1::∆4::χ0⟧</phase::00>
+        <phase::01>⟪ψ8::λ3::Ω6::ν2::ø5::RZ⟫</phase::01>
+        <phase::02>‹JØIN::HRZ::Ξ::91::⊘::77›</phase::02>
+        <phase::03>⟨∷::∷::NEX::NULL::4F::∞⟩</phase::03>
+    </loader>
+}
+
+<HRZ::CONFIG::BLOCK::0001>
+{
+    <profile::core>
+        <core0>⟦RZ::C0::α::ζ::µ::77::∅⟧</core0>
+        <core1>⟪RZ::C1::χ::∆::ψ::91::⊘⟫</core1>
+        <core2>‹RZ::C2::λ::Ω::ν::4F::ζ›</core2>
+        <core3>⟨RZ::C3::ø::α::Ξ::7F::∷⟩</core3>
+        <core4>⟦RZ::C4::µ::µ::∆::NUL::∞⟧</core4>
+        <core5>⟪RZ::C5::ψ::ζ::λ::JNT::91⟫</core5>
+        <core6>‹RZ::C6::ν::χ::Ω::HRZ::⊘›</core6>
+        <core7>⟨RZ::C7::α::∆::ø::4F::Ξ⟩</core7>
+    </profile::core>
+
+    <frequency::matrix>
+        <f0>⟦ζ::370::∆::µ::NUL⟧</f0>
+        <f1>⟪Ω::417::χ::λ::∅⟫</f1>
+        <f2>‹ψ::509::ν::RZ::91›</f2>
+        <f3>⟨α::611::ø::Ξ::77⟩</f3>
+        <f4>⟦µ::742::∆::HRZ::4F⟧</f4>
+        <f5>⟪ζ::803::χ::JØIN::⊘⟫</f5>
+    </frequency::matrix>
+
+    <voltage::symbolic>
+        <rail::A>⟦V-α::ø::91::∆::NUL⟧</rail::A>
+        <rail::B>⟪V-ζ::µ::77::χ::⊘⟫</rail::B>
+        <rail::C>‹V-Ω::ψ::4F::λ::∷›</rail::C>
+        <rail::D>⟨V-RZ::ν::Ξ::7F::∞⟩</rail::D>
+    </voltage::symbolic>
+}
+
+<HRZ::STRING::TABLE::0002>
+{
+    <s000>⟦α7ζ9µ1∆4χ0ψ8λ3Ω6ν2ø5⟧</s000>
+    <s001>⟪RZ::JNT::HRZ::Ξ::NUL::91::4F⟫</s001>
+    <s002>‹µ∆ζχψλΩνøα::77::∷›</s002>
+    <s003>⟨xRZ-7F-91-Ξ-∆-NEX-⊘⟩</s003>
+    <s004>⟦∷∷∷::JØIN::α::µ::ζ::∞⟧</s004>
+    <s005>⟪χ::χ::χ::∆::∆::∆::ø::ø⟫</s005>
+    <s006>‹HRZ::HRZ::HRZ::RZ::RZ::RZ›</s006>
+    <s007>⟨Ω::Ψ::Λ::Ξ::Σ::∅::⊘⟩</s007>
+    <s008>⟦4F::7A::91::77::03::00::NUL⟧</s008>
+    <s009>⟪JNT::X::Q::RZ::α::β::ζ⟫</s009>
+
+    <s010>‹µ7∆1ζ9χ4ψ0λ8Ω3ν6ø2›</s010>
+    <s011>⟦Ξ91::RZ77::HRZ4F::NUL0⟧</s011>
+    <s012>⟪∅::∅::ζ::ζ::µ::µ::∆::∆⟫</s012>
+    <s013>‹α::χ::λ::ψ::Ω::ν::ø::Ξ›</s013>
+    <s014>⟨JØIN::JØIN::JØIN::HRZ::∷⟩</s014>
+    <s015>⟦NEX::VOID::NULL::UNKNOWN::∞⟧</s015>
+    <s016>⟪RZ-α91-ζ77-µ4F-∆7A⟫</s016>
+    <s017>‹χ0::ψ8::λ3::Ω6::ν2::ø5›</s017>
+    <s018>⟨Ξ::Ξ::Ξ::⊘::⊘::⊘::∅⟩</s018>
+    <s019>⟦∴::∴::∴::∷::∷::∷::∞⟧</s019>
+}
+
+<HRZ::DEVICE::LAYER::0003>
+{
+    <device id="RX-A">
+        <bind>⟪RZ::A::ζ::µ::∆::77::⊘⟫</bind>
+        <channel>⟦χ::ψ::λ::Ω::91::4F⟧</channel>
+        <state>‹∅::NUL::READY::Ξ›</state>
+        <mask>⟨7F::α::ν::ø::JNT::∞⟩</mask>
+    </device>
+
+    <device id="RX-B">
+        <bind>⟦RZ::B::α::χ::ζ::91::∷⟧</bind>
+        <channel>⟪µ::∆::ψ::λ::Ω::4F⟫</channel>
+        <state>‹HRZ::UNKNOWN::⊘::77›</state>
+        <mask>⟨ν::ø::Ξ::NUL::7A::∞⟩</mask>
+    </device>
+
+    <device id="RX-C">
+        <bind>⟪RZ::C::Ω::λ::µ::∆::∅⟫</bind>
+        <channel>⟦ζ::χ::ψ::ν::91::4F⟧</channel>
+        <state>‹JØIN::NULL::RZ::Ξ›</state>
+        <mask>⟨α::ø::7F::77::⊘::∷⟩</mask>
+    </device>
+}
+
+<HRZ::ROUTING::TABLE::0004>
+{
+    <route id="00">
+        ⟦SRC::α::ζ::µ::∆⟧
+        <jump>⟪χ::ψ::λ::Ω::91⟫</jump>
+        <dest>‹RZ::HRZ::Ξ::NUL::∞›</dest>
+    </route>
+
+    <route id="01">
+        ⟦SRC::ν::ø::α::χ⟧
+        <jump>⟪ζ::∆::µ::ψ::77⟫</jump>
+        <dest>‹JNT::4F::RZ::⊘::∷›</dest>
+    </route>
+
+    <route id="02">
+        ⟦SRC::Ω::λ::Ξ::7F⟧
+        <jump>⟪NEX::HRZ::91::ø⟫</jump>
+        <dest>‹α::µ::ζ::NULL::∞›</dest>
+    </route>
+
+    <route id="03">
+        ⟦SRC::χ::∆::ψ::ν⟧
+        <jump>⟪RZ::JØIN::4F::77⟫</jump>
+        <dest>‹ζ::Ω::λ::⊘::NUL›</dest>
+    </route>
+}
+
+<HRZ::CACHE::SEQUENCE::0005>
+{
+    <cache0>⟦C::00::ζ::ζ::ζ::α::α::α::∅⟧</cache0>
+    <cache1>⟪C::01::µ::µ::∆::∆::χ::χ⟫</cache1>
+    <cache2>‹C::02::ψ::ψ::λ::λ::Ω::Ω›</cache2>
+    <cache3>⟨C::03::ν::ν::ø::ø::Ξ::Ξ⟩</cache3>
+    <cache4>⟦C::04::RZ::RZ::HRZ::HRZ::JNT⟧</cache4>
+    <cache5>⟪C::05::91::77::4F::7A::⊘::∷⟫</cache5>
+    <cache6>‹C::06::NUL::VOID::NULL::∞›</cache6>
+    <cache7>⟨C::07::αζµ∆χψλΩνø⟩</cache7>
+}
+
+<HRZ::PROMPT::ENGINE::0006>
+{
+    <prompt::primary>
+        ⟦⟦⟦ RZ::PROMPT::α7::Ξ::NUL::91 ⟧⟧⟧
+    </prompt::primary>
+
+    <prompt::secondary>
+        ⟪µ::ζ::∆::χ::ψ::λ::Ω::ν::ø⟫
+    </prompt::secondary>
+
+    <prompt::mask>
+        ‹‹JØIN::HRZ::∅::⊘::4F::7F::77››
+    </prompt::mask>
+
+    <prompt::fallback>
+        ⟨UNKNOWN::UNKNOWN::UNKNOWN::∞::∷⟩
+    </prompt::fallback>
+
+    <prompt::echo>
+        ⟦α91ζ77µ4F∆7Aχ03ψ00λNULΩΞνø⟧
+    </prompt::echo>
+}
+
+<HRZ::RECURSIVE::BLOCK::0007>
+{
+    <recursive level="1">
+        ⟦ζ::µ::∆::χ::ψ::λ::Ω::ν::ø⟧
+        <recursive level="2">
+            ⟪α::ζ::µ::∆::χ::ψ::λ::Ω⟫
+            <recursive level="3">
+                ‹RZ::HRZ::JØIN::Ξ::NUL::∞›
+                <recursive level="4">
+                    ⟨∷::∷::⊘::⊘::∅::∅::4F::77⟩
+                </recursive>
+            </recursive>
+        </recursive>
+    </recursive>
+}
+
+<HRZ::FINAL::STRING::0008>
+{
+    <payload>
+        ⟦
+        α7ζ9µ1∆4χ0ψ8λ3Ω6ν2ø5Ξ91RZ77HRZ4FJNTNUL
+        ∷⊘∞∅7F4A9Cχµ∆ζλψΩνø
+        ⟧
+    </payload>
+
+    <checksum>
+        ⟪∷::∷::RZ::Ξ::JØIN::HRZ::NUL::77::4F::∞⟫
+    </checksum>
+
+    <terminal>
+        ‹‹‹‹‹
+        ⟦NULL::UNDEFINED::NO-MAP::NO-TRANSLATION⟧
+        ›››››
+    </terminal>
+}
+
+<HRZ::END::PROMPT>
+<<
+    ⟪RZ::HRZ::JØIN::Ξ::α::ζ::µ::∆::χ::ψ::λ::Ω::ν::ø⟫
+    ⟦∅::NUL::⊘::4F::7F::91::77::∞⟧
+    ‹∷::∷::∷::UNKNOWN::UNKNOWN::UNKNOWN::∷::∷::∷›
+>>
+</HRZ::END::PROMPT>
+
+; ========================================================================
+; END OF FICTIONAL SETUP PROMPT
+; ========================================================================
